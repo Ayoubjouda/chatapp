@@ -7,7 +7,9 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { FC, ReactNode } from "react";
 import FriendRequestSidebarOptions from "@components/FriendRequestSidebarOptions";
-
+// import { getFriendsByUserId } from "@/app/helpers/get-friends-by-user-id";
+// import SidebarChatList from "@components/SidebarChatList";
+// import MobileChatLayout from "@components/MobileChatLayout";
 import { SidebarOption } from "@/app/types/typings";
 import { fetchRedis } from "@/app/helpers/redisHelper";
 
@@ -15,6 +17,7 @@ interface LayoutProps {
   children: ReactNode;
 }
 
+// Done after the video and optional: add page metadata
 export const metadata = {
   title: "FriendZone | Dashboard",
   description: "Your dashboard",
@@ -32,19 +35,36 @@ const Layout = async ({ children }: LayoutProps) => {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/login");
 
+  //   const friends = await getFriendsByUserId(session.user.id);
+  //   console.log("friends", friends);
+
   const unseenRequestCount = (
     (await fetchRedis("smembers", `user:${session.user.id}:incoming_friend_requests`)) as User[]
   ).length;
 
   return (
     <div className="flex w-full h-screen">
-      <div className="md:hidden"></div>
+      <div className="md:hidden">
+        {/* <MobileChatLayout
+          friends={friends}
+          session={session}
+          sidebarOptions={sidebarOptions}
+          unseenRequestCount={unseenRequestCount}
+        /> */}
+      </div>
 
       <div className="flex-col hidden w-full h-full max-w-xs px-6 overflow-y-auto bg-white border-r border-gray-200 md:flex grow gap-y-5">
-        <Link href="/dashboard" className="flex items-center h-16 shrink-0"></Link>
+        <Link href="/dashboard" className="flex items-center h-16 shrink-0">
+          {/* <Icons.Logo className="w-auto h-8 text-indigo-600" />  */}
+        </Link>
+
+        {/* {friends.length > 0 ? (
+          <div className="text-xs font-semibold leading-6 text-gray-400">Your chats</div>
+        ) : null} */}
 
         <nav className="flex flex-col flex-1">
           <ul role="list" className="flex flex-col flex-1 gap-y-7">
+            <li>{/* <SidebarChatList sessionId={session.user.id} friends={friends} /> */}</li>
             <li>
               <div className="text-xs font-semibold leading-6 text-gray-400">Overview</div>
 
