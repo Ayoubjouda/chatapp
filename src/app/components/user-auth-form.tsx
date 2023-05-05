@@ -20,7 +20,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     setIsLoading(true);
     try {
       const cred = await signIn("google");
-      console.log(cred);
     } catch (error) {
       toast.error("Something went wrong with your Google login");
     } finally {

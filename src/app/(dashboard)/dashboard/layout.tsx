@@ -7,8 +7,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { FC, ReactNode } from "react";
 import FriendRequestSidebarOptions from "@components/FriendRequestSidebarOptions";
-// import { getFriendsByUserId } from "@/app/helpers/get-friends-by-user-id";
-// import SidebarChatList from "@components/SidebarChatList";
+import { getFriendsByUserId } from "@/app/helpers/helperFunctions";
+import SidebarChatList from "@components/SidebarChatList";
 // import MobileChatLayout from "@components/MobileChatLayout";
 import { SidebarOption } from "@/app/types/typings";
 import { fetchRedis } from "@/app/helpers/redisHelper";
@@ -33,10 +33,9 @@ const sidebarOptions: SidebarOption[] = [
 
 const Layout = async ({ children }: LayoutProps) => {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/login");
+  if (!session) notFound();
 
-  //   const friends = await getFriendsByUserId(session.user.id);
-  //   console.log("friends", friends);
+  const friends = await getFriendsByUserId(session.user.id);
 
   const unseenRequestCount = (
     (await fetchRedis("smembers", `user:${session.user.id}:incoming_friend_requests`)) as User[]
@@ -58,13 +57,15 @@ const Layout = async ({ children }: LayoutProps) => {
           {/* <Icons.Logo className="w-auto h-8 text-indigo-600" />  */}
         </Link>
 
-        {/* {friends.length > 0 ? (
+        {friends.length > 0 ? (
           <div className="text-xs font-semibold leading-6 text-gray-400">Your chats</div>
-        ) : null} */}
+        ) : null}
 
         <nav className="flex flex-col flex-1">
           <ul role="list" className="flex flex-col flex-1 gap-y-7">
-            <li>{/* <SidebarChatList sessionId={session.user.id} friends={friends} /> */}</li>
+            <li>
+              <SidebarChatList sessionId={session.user.id} friends={friends} />
+            </li>
             <li>
               <div className="text-xs font-semibold leading-6 text-gray-400">Overview</div>
 
@@ -123,7 +124,7 @@ const Layout = async ({ children }: LayoutProps) => {
         </nav>
       </div>
 
-      <aside className="container w-full max-h-screen py-16 md:py-12">{children}</aside>
+      <aside className="container w-full max-h-screen py-2 md:py-2">{children}</aside>
     </div>
   );
 };
