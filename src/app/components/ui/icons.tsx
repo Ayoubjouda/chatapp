@@ -24,6 +24,7 @@ import {
   Twitter,
   User,
   X,
+  UserPlus,
   type Icon as LucideIcon,
 } from "lucide-react";
 
@@ -67,6 +68,7 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  UserPlus: UserPlus,
   gitHub: (props: LucideProps) => (
     <svg viewBox="0 0 438.549 438.549" {...props}>
       <path
