@@ -20,7 +20,7 @@ interface pageProps {
 
 async function getChatMessages(chatId: string) {
   try {
-    const result: string[] = await fetchRedis("zrange", `chat${chatId}:messages`, 0, -1);
+    const result: string[] = await fetchRedis("zrange", `chat:${chatId}:messages`, 0, -1);
 
     const dMessages = result.map((message) => JSON.parse(message) as Message);
     const reversedMessages = dMessages.reverse();
@@ -48,7 +48,7 @@ const page = async ({ params }: pageProps) => {
   const chatPartnerId = user.id === userId1 ? userId2 : userId1;
   const chatPartner = (await redis.get(`user:${chatPartnerId}`)) as User;
   const initialMessages = await getChatMessages(chatId);
-
+  console.log(initialMessages);
   const [partnerFirstName, partnterLastname] = chatPartner.name.split(" ");
   const chatPartnerName = `${partnerFirstName[0]} ${partnterLastname[0]}`.toUpperCase();
 
@@ -83,7 +83,7 @@ const page = async ({ params }: pageProps) => {
             chatPartner={chatPartner}
           />
           <div className="flex flex-col flex-grow w-full bg-black"></div>
-          <ChatInput chatPartner={chatPartner} chatId="ee" />
+          <ChatInput chatPartner={chatPartner} chatId={chatId} />
         </CardContent>
       </Card>
     </div>
