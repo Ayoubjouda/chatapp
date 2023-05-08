@@ -48,7 +48,7 @@ const Messages: FC<MessagesProps> = ({
   return (
     <div
       id="messages"
-      className="flex flex-col-reverse flex-1 h-full gap-4 p-3 overflow-y-auto scrolling-touch scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2"
+      className="flex flex-col-reverse flex-1 h-full gap-4 overflow-y-auto scrolling-touch md:p-3 scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2"
     >
       <div ref={scrollDownRef} />
 
