@@ -30,7 +30,7 @@ import {
 
 export type Icon = LucideIcon;
 
-export const Icons = {
+export const Icons: any = {
   logo: (props: LucideProps) => (
     <svg
       viewBox="0 0 24 24"

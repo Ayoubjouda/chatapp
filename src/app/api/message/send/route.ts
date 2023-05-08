@@ -5,6 +5,8 @@ import { nanoid } from "nanoid";
 import { getServerSession } from "next-auth";
 import { messageValidator, Message } from "@/lib/validators/messages";
 import { ZodError } from "zod";
+import { pusherServer } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 export async function POST(req: Request) {
   try {
     const { text, chatId } = await req.json();
@@ -46,6 +48,14 @@ export async function POST(req: Request) {
     };
     //check if the message is valid
     const message = messageValidator.parse(MessageData);
+
+    await pusherServer.trigger(toPusherKey(`chat:${chatId}`), "incoming-message", message);
+
+    await pusherServer.trigger(toPusherKey(`user:${friendId}:chats`), "new_message", {
+      ...message,
+      senderImg: sender.image,
+      senderName: sender.name,
+    });
 
     //add the message to the db
     redis.zadd(`chat:${chatId}:messages`, { score: timestamp, member: JSON.stringify(message) });

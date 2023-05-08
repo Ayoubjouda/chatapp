@@ -1,7 +1,8 @@
 "use client";
 
+import { pusherClient } from "@/lib/pusher";
 // import { pusherClient } from "@/lib/pusher";
-import { cn } from "@/lib/utils";
+import { cn, toPusherKey } from "@/lib/utils";
 import { Message } from "@/lib/validators/messages";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -10,7 +11,7 @@ import { FC, useEffect, useRef, useState } from "react";
 interface MessagesProps {
   initialMessages: Message[];
   sessionId: string;
-  //   chatId: string;
+  chatId: string;
   sessionImg: string | null | undefined;
   chatPartner: User;
 }
@@ -18,13 +19,27 @@ interface MessagesProps {
 const Messages: FC<MessagesProps> = ({
   initialMessages,
   sessionId,
-  //   chatId,
+  chatId,
   chatPartner,
   sessionImg,
 }) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
+
+    const messageHandler = (message: Message) => {
+      setMessages((prev) => [message, ...prev]);
+    };
+
+    pusherClient.bind("incoming-message", messageHandler);
+
+    return () => {
+      pusherClient.unsubscribe(toPusherKey(`chat:${chatId}`));
+      pusherClient.unbind("incoming-message", messageHandler);
+    };
+  }, [chatId]);
 
   const formatTimestamp = (timestamp: number) => {
     return format(timestamp, "HH:mm");
@@ -58,7 +73,7 @@ const Messages: FC<MessagesProps> = ({
               >
                 <span
                   className={cn("px-4 py-2 rounded-lg inline-block", {
-                    "bg-indigo-600 text-white": isCurrentUser,
+                    "bg-black  text-white": isCurrentUser,
                     "bg-gray-200 text-gray-900": !isCurrentUser,
                     "rounded-br-none": !hasNextMessageFromSameUser && isCurrentUser,
                     "rounded-bl-none": !hasNextMessageFromSameUser && !isCurrentUser,

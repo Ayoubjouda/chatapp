@@ -1,30 +1,43 @@
 "use client";
-import { FC, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { FC, useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@components/ui/avatar";
 import { Button } from "@components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@components/ui/popover";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { pusherClient } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 interface FriendRequestsProps {
   incomingFriendRequests: IncomingFriendRequest[];
   sessionId: string;
 }
 
-const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests }) => {
+const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests, sessionId }) => {
   const [friendRequests, setFriendRequests] =
     useState<IncomingFriendRequest[]>(incomingFriendRequests);
 
   const router = useRouter();
+
+  useEffect(() => {
+    pusherClient.subscribe(toPusherKey(`user:${sessionId}:incoming_friend_requests`));
+    console.log("listening to ", `user:${sessionId}:incoming_friend_requests`);
+
+    const friendRequestHandler = ({
+      senderId,
+      senderEmail,
+      senderAvatar,
+      senderName,
+    }: IncomingFriendRequest) => {
+      console.log("function got called");
+      setFriendRequests((prev) => [{ senderId, senderEmail, senderAvatar, senderName }]);
+    };
+
+    pusherClient.bind("incoming_friend_requests", friendRequestHandler);
+
+    return () => {
+      pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:incoming_friend_requests`));
+      pusherClient.unbind("incoming_friend_requests", friendRequestHandler);
+    };
+  }, [sessionId]);
 
   const acceptFriend = async (senderId: string) => {
     await axios.post("/api/friends/accept", { id: senderId });
@@ -33,7 +46,6 @@ const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests }) => 
 
     router.refresh();
   };
-
   const denyFriend = async (senderId: string) => {
     await axios.post("/api/friends/deny", { id: senderId });
 
@@ -52,6 +64,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests }) => 
             <div className="flex items-center space-x-4">
               <Avatar>
                 <AvatarImage src={friendRequest.senderAvatar} />
+                <AvatarFallback>{friendRequest.senderName[0]}</AvatarFallback>
               </Avatar>
               <div>
                 <p className="text-sm font-medium leading-none">{friendRequest.senderName}</p>
@@ -60,7 +73,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({ incomingFriendRequests }) => 
             </div>
             <div className="flex gap-4">
               <Button onClick={() => acceptFriend(friendRequest.senderId)}>Accept</Button>
-              <Button onClick={() => acceptFriend(friendRequest.senderId)} variant="secondary">
+              <Button onClick={() => denyFriend(friendRequest.senderId)} variant="secondary">
                 Decline
               </Button>
             </div>

@@ -4,14 +4,14 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { FC, ReactNode } from "react";
 import FriendRequestSidebarOptions from "@components/FriendRequestSidebarOptions";
 import { getFriendsByUserId } from "@/app/helpers/helperFunctions";
 import SidebarChatList from "@components/SidebarChatList";
-// import MobileChatLayout from "@components/MobileChatLayout";
 import { SidebarOption } from "@/app/types/typings";
 import { fetchRedis } from "@/app/helpers/redisHelper";
+import MobileChatLayout from "@/app/components/MobileChatLayout";
 
 interface LayoutProps {
   children: ReactNode;
@@ -40,16 +40,17 @@ const Layout = async ({ children }: LayoutProps) => {
   const unseenRequestCount = (
     (await fetchRedis("smembers", `user:${session.user.id}:incoming_friend_requests`)) as User[]
   ).length;
+  console.log();
 
   return (
     <div className="flex w-full h-screen">
       <div className="md:hidden">
-        {/* <MobileChatLayout
+        <MobileChatLayout
           friends={friends}
           session={session}
           sidebarOptions={sidebarOptions}
           unseenRequestCount={unseenRequestCount}
-        /> */}
+        />
       </div>
 
       <div className="flex-col hidden w-full h-full max-w-xs px-6 overflow-y-auto bg-white border-r border-gray-200 md:flex grow gap-y-5">
@@ -76,9 +77,9 @@ const Layout = async ({ children }: LayoutProps) => {
                     <li key={option.id}>
                       <Link
                         href={option.href}
-                        className="flex gap-3 p-2 text-sm font-semibold leading-6 text-gray-700 rounded-md hover:text-indigo-600 hover:bg-gray-50 group"
+                        className="flex gap-3 p-2 text-sm font-semibold leading-6 text-gray-700 rounded-md hover:text-black hover:bg-gray-50 group"
                       >
-                        <span className="text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white">
+                        <span className="text-gray-400 border-gray-200 group-hover:border-black group-hover:text-black flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white">
                           <Icon className="w-4 h-4" />
                         </span>
 

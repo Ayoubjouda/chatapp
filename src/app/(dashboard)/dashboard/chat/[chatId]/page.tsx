@@ -48,7 +48,7 @@ const page = async ({ params }: pageProps) => {
   const chatPartnerId = user.id === userId1 ? userId2 : userId1;
   const chatPartner = (await redis.get(`user:${chatPartnerId}`)) as User;
   const initialMessages = await getChatMessages(chatId);
-  console.log(initialMessages);
+
   const [partnerFirstName, partnterLastname] = chatPartner.name.split(" ");
   const chatPartnerName = `${partnerFirstName[0]} ${partnterLastname[0]}`.toUpperCase();
 
@@ -81,6 +81,7 @@ const page = async ({ params }: pageProps) => {
             sessionImg={session.user.image}
             initialMessages={initialMessages}
             chatPartner={chatPartner}
+            chatId={chatId}
           />
           <div className="flex flex-col flex-grow w-full bg-black"></div>
           <ChatInput chatPartner={chatPartner} chatId={chatId} />
