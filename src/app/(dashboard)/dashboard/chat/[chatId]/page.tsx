@@ -50,7 +50,7 @@ const page = async ({ params }: pageProps) => {
   const initialMessages = await getChatMessages(chatId);
 
   const [partnerFirstName, partnterLastname] = chatPartner.name.split(" ");
-  const chatPartnerName = `${partnerFirstName[0]} ${partnterLastname[0]}`.toUpperCase();
+  const chatPartnerName = `${partnerFirstName?.[0]} ${partnterLastname?.[0]}`.toUpperCase();
 
   return (
     <div className="flex-1 mt-14 md:mt-0 ">

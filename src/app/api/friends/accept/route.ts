@@ -1,6 +1,8 @@
 import { fetchRedis } from "@/app/helpers/redisHelper";
 import { authOptions } from "@/lib/auth";
+import { pusherServer } from "@/lib/pusher";
 import { redis } from "@/lib/redis";
+import { toPusherKey } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 
@@ -37,6 +39,21 @@ export async function POST(req: Request) {
     if (!hasFriendRequest) {
       return new Response("No Friend Request", { status: 400 });
     }
+
+    const [userRaw, friendRaw] = (await Promise.all([
+      fetchRedis("get", `user:${session.user.id}`),
+      fetchRedis("get", `user:${idToAdd}`),
+    ])) as [string, string];
+
+    const user = JSON.parse(userRaw) as User;
+    const friend = JSON.parse(friendRaw) as User;
+
+    // notify added user
+
+    await Promise.all([
+      pusherServer.trigger(toPusherKey(`user:${idToAdd}:friends`), "new_friend", user),
+      pusherServer.trigger(toPusherKey(`user:${session.user.id}:friends`), "new_friend", friend),
+    ]);
     // if all okey we add the usertoadd to the friends list of the user
     await redis.sadd(`user:${session.user.id}:friends`, idToAdd);
     // and we add the user to add to the friends list of the user
