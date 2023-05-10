@@ -5,7 +5,7 @@ interface pageProps {}
 
 const page = async ({}) => {
   return (
-    <div className="mt-14 md:hidden ">
+    <div className="mx-4 mt-14">
       <AddFriendForm />
     </div>
   );
