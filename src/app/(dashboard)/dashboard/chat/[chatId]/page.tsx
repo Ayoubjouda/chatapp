@@ -61,7 +61,7 @@ const page = async ({ params }: pageProps) => {
               <Avatar>
                 <AvatarImage src={chatPartner.image} />
 
-                <AvatarFallback children={chatPartnerName} />
+                <AvatarFallback>chatPartnerName</AvatarFallback>
               </Avatar>
               <div>
                 <p className="text-sm font-medium leading-none">{chatPartner.name}</p>
