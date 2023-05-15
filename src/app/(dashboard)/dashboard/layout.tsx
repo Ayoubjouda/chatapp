@@ -12,6 +12,7 @@ import SidebarChatList from "@components/SidebarChatList";
 import { SidebarOption } from "@/app/types/typings";
 import { fetchRedis } from "@/app/helpers/redisHelper";
 import MobileChatLayout from "@/app/components/MobileChatLayout";
+import logo from "/public/logo.png";
 
 interface LayoutProps {
   children: ReactNode;
@@ -55,7 +56,7 @@ const Layout = async ({ children }: LayoutProps) => {
 
       <div className="flex-col hidden w-full h-full max-w-xs px-6 overflow-y-auto bg-white border-r border-gray-200 md:flex grow gap-y-5">
         <Link href="/dashboard" className="flex items-center h-16 shrink-0">
-          {/* <Icons.Logo className="w-auto h-8 text-indigo-600" />  */}
+          <Image className="" src={logo} alt="logo" height={60} width={60} />
         </Link>
 
         {friends.length > 0 ? (
@@ -125,7 +126,7 @@ const Layout = async ({ children }: LayoutProps) => {
         </nav>
       </div>
 
-      <aside className="w-full max-h-screen  md:py-2">{children}</aside>
+      <aside className="w-full max-h-screen md:py-2">{children}</aside>
     </div>
   );
 };

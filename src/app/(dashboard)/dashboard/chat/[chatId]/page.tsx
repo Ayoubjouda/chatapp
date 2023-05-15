@@ -47,6 +47,7 @@ const page = async ({ params }: pageProps) => {
   //chatPartnerId is the id of the user that is not the current user
   const chatPartnerId = user.id === userId1 ? userId2 : userId1;
   const chatPartner = (await redis.get(`user:${chatPartnerId}`)) as User;
+
   const initialMessages = await getChatMessages(chatId);
 
   const [partnerFirstName, partnterLastname] = chatPartner.name.split(" ");
