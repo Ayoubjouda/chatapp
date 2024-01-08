@@ -40,7 +40,7 @@ const page = async () => {
   return (
     <main className="pt-1">
       <div className="flex flex-col gap-4">
-        <Card className="min-h-[90vh]">
+        <div className="min-h-[90vh]">
           <CardHeader>
             <CardTitle>Friends Requets</CardTitle>
             <CardDescription>
@@ -66,7 +66,7 @@ const page = async () => {
               </div>
             </div> */}
           </CardContent>
-        </Card>
+        </div>
       </div>
     </main>
   );

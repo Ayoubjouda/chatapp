@@ -55,7 +55,7 @@ const page = async ({ params }: pageProps) => {
 
   return (
     <div className="flex-1 mt-14 md:mt-0 ">
-      <Card className="min-h-[calc(100vh-1rem)] flex-1 justify-between flex flex-col h-full  ">
+      <div className="min-h-[calc(100vh-1rem)] flex-1 justify-between flex flex-col h-full  ">
         <CardHeader className="py-3 overflow-hidden ">
           <div key={chatPartner.id} className="flex items-center justify-between md:space-x-4">
             <div className="flex items-center space-x-2 md:space-x-4">
@@ -87,7 +87,7 @@ const page = async ({ params }: pageProps) => {
           <div className="flex flex-col flex-grow w-full bg-black"></div>
           <ChatInput chatPartner={chatPartner} chatId={chatId} />
         </CardContent>
-      </Card>
+      </div>
     </div>
   );
 };
